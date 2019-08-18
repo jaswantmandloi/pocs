@@ -1,26 +1,19 @@
 import React from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
-function getJsonData() {
-  
-  fetch('/todos/1')
-  .then((data) => {
-    console.log('getJsonData', data);
-  })
-  .catch((error) => {
-    console.log('getJsonData', error);
-  });
-}
+import Routes from './Routes'
 
 
 function App() {
   return (
-    <div className="App">
-     Test PWA
-
-     <div>
-        <button onClick={getJsonData}>Get json</button>
-     </div>
+    <div className="container-fluid ">
+      <Router>{
+        Routes.map((Rt) => {
+          return <Route key={Rt.route} path={Rt.route} exact component={Rt.component} />
+        })
+      }
+      </Router>
     </div>
   );
 }

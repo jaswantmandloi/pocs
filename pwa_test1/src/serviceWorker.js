@@ -12,13 +12,73 @@
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
-    // [::1] is the IPv6 localhost address.
-    window.location.hostname === '[::1]' ||
-    // 127.0.0.1/8 is considered localhost for IPv4.
-    window.location.hostname.match(
-      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-    )
+  // [::1] is the IPv6 localhost address.
+  window.location.hostname === '[::1]' ||
+  // 127.0.0.1/8 is considered localhost for IPv4.
+  window.location.hostname.match(
+    /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+  )
 );
+
+var pk = 'BJQ18IXSBnhBzN-PC8tJh0WJP-dzulli5I0zie3xhGGcuaiK_slrRKhVvbY_BTla_IxZ8vz2sqbIFzBGvWIU-G0';
+
+
+function urlB64ToUint8Array(base64String) {
+  var padding = "=".repeat((4 - base64String.length % 4) % 4);
+  var base64 = (base64String + padding).replace(/\-/g, "+").replace(/_/g, "/");
+  var rawData = atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+
+  for (var i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+
+  return outputArray;
+};
+
+
+function askNotification(registration) {
+  window.Notification.requestPermission().then(function () {
+
+    var applicationServerKey = urlB64ToUint8Array(pk);
+    var options = {
+      applicationServerKey: applicationServerKey,
+      userVisibleOnly: true
+    };
+
+    registration.pushManager.subscribe(options).then(function (subscription) {
+      console.log('subscription', subscription);
+
+      console.log('stringify version subscription', JSON.stringify(subscription));
+
+    });
+
+
+  }).catch(function (error) {
+    console.log('Error requestPermission', error);
+  });
+}
+
+window.addEventListener('beforeinstallprompt', (deferredPrompt) => {
+  
+  deferredPrompt.prompt();
+
+  // Wait for the user to respond to the prompt
+  deferredPrompt.userChoice
+  .then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the  prompt');
+      } else {
+        console.log('User dismissed the prompt');
+      }
+      deferredPrompt = null;
+  });
+
+});
+
+window.addEventListener('appinstalled', (evt) => {
+  console.log('a2hs installed');
+});
 
 
 export function register(config) {
@@ -32,7 +92,7 @@ export function register(config) {
   //     return;
   //   }
 
-    
+
   // }
 
   window.addEventListener('load', () => {
@@ -57,10 +117,43 @@ export function register(config) {
   });
 }
 
+function send_message_to_sw(msg){
+  return new Promise(function(resolve, reject){
+      // Create a Message Channel
+      var msg_chan = new MessageChannel();
+
+      // Handler for recieving message reply from service worker
+      msg_chan.port1.onmessage = function(event){
+          if(event.data.error){
+              reject(event.data.error);
+          }else{
+              resolve(event.data);
+          }
+      };
+
+      // Send message to service worker along with port for reply
+      navigator.serviceWorker.controller.postMessage("Client 1 says '"+msg+"'", [msg_chan.port2]);
+  });
+}
+
 function registerValidSW(swUrl, config) {
   navigator.serviceWorker
-    .register(swUrl)
+    .register(swUrl, {
+      scope: '.'
+    })
     .then(registration => {
+
+      askNotification(registration);
+
+      if(registration.sync) {
+        registration.sync.register('event1')
+      }
+
+      
+      send_message_to_sw('Hello sent from window client').then((obj) =>{
+        console.log('Reply from service worker', obj);
+      });
+
       registration.onupdatefound = () => {
         const installingWorker = registration.installing;
         if (installingWorker == null) {
@@ -74,7 +167,7 @@ function registerValidSW(swUrl, config) {
               // content until all client tabs are closed.
               console.log(
                 'New content is available and will be used when all ' +
-                  'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
+                'tabs for this page are closed. See https://bit.ly/CRA-PWA.'
               );
 
               // Execute callback
