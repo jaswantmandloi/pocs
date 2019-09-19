@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-
 import Link from 'next/link'
+
+import Test from '../components/Test'
 
 
 function Index(props) {
@@ -11,6 +12,10 @@ function Index(props) {
 
   return (
     <div>
+
+      <div>
+        <Test />
+      </div>
 
 
       <div>

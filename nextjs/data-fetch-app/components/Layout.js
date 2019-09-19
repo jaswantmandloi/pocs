@@ -5,7 +5,7 @@ function Layout (props) {
   return (
     <div>
      <header>
-      <Test {...props}></Test>
+      Header Content
      </header>
 
       <main>
