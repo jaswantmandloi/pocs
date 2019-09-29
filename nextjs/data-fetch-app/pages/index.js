@@ -8,7 +8,7 @@ function Index(props) {
 
   const [pageState, setPageState] = useState({})
 
-  
+  console.log('this',this)
 
   return (
     <div>
@@ -21,6 +21,13 @@ function Index(props) {
       <div>
         <Link href='/index2'>
           <a>Index2</a>
+        </Link>
+      </div>
+
+
+      <div>
+        <Link href='/index3'>
+          <a>Index3</a>
         </Link>
       </div>
 

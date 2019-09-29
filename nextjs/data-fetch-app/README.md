@@ -62,3 +62,14 @@ Using `getInitialProps` fetches data on the server for SSR and then on the clien
 13. Redux with hooks and what are performance benefits
 14. How big virtual dom is to be optimized / How reconciler diff works ( Does it diff the big whole tree against the new created OR updated tree parts are created and diffed  )
 15. Tools for optimization 
+16. Mounting unmounting strategy (Top-Bottom or Bottom to Top)
+17. How to grab the react fiber
+18. How reconciler works
+
+
+
+
+https://reactjs.org/docs/reconciliation.html
+
+
+https://reactjs.org/docs/profiler.html
