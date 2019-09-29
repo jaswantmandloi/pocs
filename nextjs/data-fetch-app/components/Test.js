@@ -9,6 +9,10 @@ function Index (props) {
   const {onSubmit, message} = useContext(HeaderContext);
   const [child1, setChild1] = useState('child1')
   const [child2, setChild2] = useState('child2')
+
+  
+
+  
   
   return (
     <div>
@@ -24,8 +28,8 @@ function Index (props) {
       </form>
 
 
-      <Child1 text={child1} />
-      <Child2 text={child2} />
+      <Child1  text={child1} />
+      <Child2  text={child2} />
 
       <div>
         <button onClick={() => { setChild1(new Date().getTime())  }} >
