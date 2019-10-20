@@ -4,3 +4,5 @@ nextjs/data-fetch-app/node_modules/
 nextjs/data-fetch-app/.next/
 nextjs/with-redux-app/node_modules/
 nextjs/with-redux-app/.next/
+nextjs/with-jest-app/node_modules/
+nextjs/with-jest-app/.next/
